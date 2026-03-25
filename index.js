@@ -1,6 +1,6 @@
 // Task 1: Set up server [1 pt]
 // Install + import express and mongoose 
- 
+
 const express = require("express");
 const mongoose = require("mongoose")
 const app = express();
@@ -35,10 +35,10 @@ startServer()
 // You need at least 1 required, 1 unique, and 1 default that makes sense
 
 const menuSchema = new mongoose.Schema({
-  name: {type: String, required: true},
-  cost: {type: Number, required: true, default: 0 },
-  amount: {type: Number, required: true, default: 0},
-  isSpicy : {type: Boolean, default: false, unique: true },
+  name: { type: String, required: true },
+  cost: { type: Number, required: true, default: 0 },
+  amount: { type: Number, required: true, default: 0 },
+  isSpicy: { type: Boolean, default: false, unique: true },
 })
 
 // Task 3: Define the model for the MenuItem [1 pt]
@@ -50,27 +50,40 @@ const Menu = mongoose.model("Menu", menuSchema, "Menus")
 // Test this route from Postman (make public!) and make sure your test item is in the DB
 
 app.post("/menu/test", async (req, res) => {
-    const newMenuTest = await new Menu({
-name: req.body.name,
-cost: req.body.cost,
-amount: req.body.amount,
-isSpicy: req.body.isSpicy
+  const newMenuTest = await new Menu({
+    name: "Grilled Cheese Cheeseburger",
+    cost: 7,
+    amount: 700,
+    isSpicy: false
   }).save()
-  
   res.json(newMenuTest)
 })
 
 
 // Task 5: Define a GET route at /menu that returns all menu items as a JSON [2 pt]
 
-app.get()
+app.get("/menu", async (req, res) => {
+  const menu = await Menu.find({})
+  res.json(menu)
+})
 
 // Task 6: Define a GET route at /menu/value that returns only menu items that cost less than 5 [2 pts]
 
-
+app.get("/menu/value", async (req, res) => {
+  const menuValue = await Menu.find({ cost: { $lt: 5 } })
+  res.json(menuValue)
+})
 
 // Task 7: Define a POST route at /menu/new that adds a new menu item [2 pts]
 // The values for the menu item should come from the request body
 // Test this route from Postman (make public!) and make sure the user's item is in the DB
 
-
+app.post("/menu/new", async (req, res) => {
+  const newMenu = await new Menu({
+    name: req.body.name,
+    cost: req.body.cost,
+    amount: req.body.amount,
+    isSpicy: req.body.isSpicy
+  }).save()
+  res.json(newMenu)
+})
